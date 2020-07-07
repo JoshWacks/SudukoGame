@@ -1,9 +1,13 @@
 package sudukoPackage;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.EventQueue;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
@@ -12,6 +16,17 @@ public class SudukoMethods {
 	static private int[][] board=new int[9][9];
 	static private boolean helpOn=true;
 	
+	static private JFrame gwFrame;
+
+	public static void main(String[] args) {
+
+		displayBoard();
+		GameWindow gw=new GameWindow();
+		gwFrame=gw.frame;
+		makePresetBoard();
+		gwFrame.setVisible(true);
+		
+	}
 	
 	private boolean checkBasicValid(int num) {
 		if(num==-1) {
@@ -254,12 +269,105 @@ public class SudukoMethods {
 		}
 		
 	}
-	 
-		public static void main(String[] args) {
+	
+	private static void makePresetBoard() {
+		Component[] container=gwFrame.getContentPane().getComponents();
+		JPanel jp0=(JPanel) container[0];
+		JTextField jtf03=(JTextField) jp0.getComponent(3);
+		JTextField jtf04=(JTextField) jp0.getComponent(4);
+		JTextField jtf07=(JTextField) jp0.getComponent(7);
+		
+		jtf03.setText("2");
+		jtf03.setEditable(false);
+		jtf04.setText("7");
+		jtf04.setEditable(false);
+		jtf07.setText("6");
+		jtf07.setEditable(false);
+		
+		JPanel jp1=(JPanel) container[1];
+		JTextField jtf11=(JTextField) jp1.getComponent(1);
+		JTextField jtf14=(JTextField) jp1.getComponent(4);
+		JTextField jtf16=(JTextField) jp1.getComponent(6);
+		
+		jtf11.setText("8");
+		jtf11.setEditable(false);
+		jtf14.setText("3");
+		jtf14.setEditable(false);
+		jtf16.setText("7");
+		jtf16.setEditable(false);
+		
+		JPanel jp2=(JPanel) container[2];
+		JTextField jtf20=(JTextField) jp2.getComponent(0);
+		JTextField jtf23=(JTextField) jp2.getComponent(3);
 
-			displayBoard();
-			GameWindow gw=new GameWindow();
-			gw.frame.setVisible(true);
-		}
+		jtf20.setText("1");
+		jtf20.setEditable(false);
+		jtf23.setText("4");
+		jtf23.setEditable(false);
+		
+		JPanel jp3=(JPanel) container[3];
+		JTextField jtf37=(JTextField) jp3.getComponent(7);
+		JTextField jtf38=(JTextField) jp3.getComponent(8);
+
+		jtf37.setText("5");
+		jtf37.setEditable(false);
+		jtf38.setText("3");
+		jtf38.setEditable(false);
+		
+		JPanel jp4=(JPanel) container[4];
+		JTextField jtf44=(JTextField) jp4.getComponent(4);
+		JTextField jtf46=(JTextField) jp4.getComponent(6);
+		
+		jtf44.setText("2");
+		jtf44.setEditable(false);
+		jtf46.setText("6");
+		jtf46.setEditable(false);
+		
+		JPanel jp5=(JPanel) container[5];
+		JTextField jtf53=(JTextField) jp5.getComponent(3);
+		JTextField jtf55=(JTextField) jp5.getComponent(5);
+		JTextField jtf58=(JTextField) jp5.getComponent(8);
+		
+		jtf53.setText("5");
+		jtf53.setEditable(false);
+		jtf55.setText("4");
+		jtf55.setEditable(false);
+		jtf58.setText("9");
+		jtf58.setEditable(false);
+		
+		JPanel jp6=(JPanel) container[6];
+		JTextField jtf62=(JTextField) jp6.getComponent(2);
+		JTextField jtf65=(JTextField) jp6.getComponent(5);
+		
+		jtf62.setText("5");
+		jtf62.setEditable(false);
+		jtf65.setText("8");
+		jtf65.setEditable(false);
+
+		JPanel jp7=(JPanel) container[7];
+		JTextField jtf70=(JTextField) jp7.getComponent(0);
+		JTextField jtf72=(JTextField) jp7.getComponent(2);
+		JTextField jtf77=(JTextField) jp7.getComponent(7);
+		
+		jtf70.setText("1");
+		jtf70.setEditable(false);
+		jtf72.setText("8");
+		jtf72.setEditable(false);
+		jtf77.setText("4");
+		jtf77.setEditable(false);
+		
+		JPanel jp8=(JPanel) container[8];
+		JTextField jtf84=(JTextField) jp8.getComponent(4);
+		JTextField jtf88=(JTextField) jp8.getComponent(8);
+		
+		jtf84.setText("9");
+		jtf84.setEditable(false);
+		jtf88.setText("7");
+		jtf88.setEditable(false);
+
+	
+	}
+	 
+		
 
 }
