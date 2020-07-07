@@ -1,15 +1,12 @@
 package sudukoPackage;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.EventQueue;
+import java.awt.*;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
+import java.util.*;
+import javafx.util.Pair;
+
+import javax.swing.*;
+
 
 public class SudukoMethods {
 	
@@ -17,14 +14,16 @@ public class SudukoMethods {
 	static private boolean helpOn=true;
 	
 	static private JFrame gwFrame;
+	static private GameWindow gw;
 
 	public static void main(String[] args) {
 
 		displayBoard();
-		GameWindow gw=new GameWindow();
+		gw=new GameWindow();
 		gwFrame=gw.frame;
 		makePresetBoard();
 		gwFrame.setVisible(true);
+		System.out.println(solve());
 		
 	}
 	
@@ -39,7 +38,7 @@ public class SudukoMethods {
 		return false;
 	}
 	
-	private boolean checkValid(int row,int col,int num) {
+	private static boolean checkValid(int row,int col,int num) {
 //		System.out.println("Row: "+row+" Col: "+col+" num: "+num);
 		
 		for(int i=0;i<9;i++) {//row check
@@ -366,6 +365,213 @@ public class SudukoMethods {
 		jtf88.setEditable(false);
 
 	
+	}
+	
+	public static boolean checkBoardSolved() {
+		Set uniqueNum=new HashSet();//a set to keep track of all the numbers in each row
+		int val;
+		
+		for(int i=0;i<9;i++) {
+			for(int j=0;j<9;j++) {
+				val=board[i][j];
+				if(val==0) {
+					return false;
+				}
+				else {
+					uniqueNum.add(val);
+				}
+			}
+
+			if(uniqueNum.size()!=9) {
+				return false;
+			}else {
+				uniqueNum.clear();
+			}
+			
+		}
+		return true;
+	}
+	
+	public static int getPanel(int row, int col) {
+		if(row==0||row==1||row==2) {
+			if(col==0||col==1||col==2) {
+				return 0;
+				
+			}
+			else if(col==3||col==4||col==5) {
+				return 1;
+				
+			}
+			else if(col==6||col==7||col==8) {
+				return 2;
+				
+			}
+		}
+		
+		else if(row==3||row==4||row==5) {
+			if(col==0||col==1||col==2) {
+				return 3;
+				
+			}
+			else if(col==3||col==4||col==5) {
+				return 4;
+				
+			}
+			else if(col==6||col==7||col==8) {
+				return 5;
+				
+			}
+		}
+		else {
+			if(col==0||col==1||col==2) {
+				return 6;
+				
+			}
+			else if(col==3||col==4||col==5) {
+				return 7;
+				
+			}
+			else if(col==6||col==7||col==8) {
+				return 8;
+				
+			}
+		}
+		return -1;
+	}
+	
+	public static int getTxtField(int row, int col) {
+		if(row%3==0) {
+			if(col%3==0) {
+				return 0;
+			}
+			else if(col==1||col==4||col==7) {
+				return 1;
+			}
+			else if(col==2||col==5||col==8) {
+				return 2;
+			}
+				
+			
+		}
+		else if(row==1||row==4||row==7) {
+			if(col%3==0) {
+				return 3;
+			}
+			else if(col==1||col==4||col==7) {
+				return 4;
+			}
+			else if(col==2||col==5||col==8) {
+				return 5;
+			}
+		}
+		else {
+			if(col%3==0) {
+				return 6;
+			}
+			else if(col==1||col==4||col==7) {
+				return 7;
+			}
+			else if(col==2||col==5||col==8) {
+				return 8;
+			}
+		}
+		return -1;
+	}
+	
+	public static boolean solve() {
+		int panel=0;
+		int txtField=0;
+		int val=1;
+		
+		int row=0;
+		int col=0;
+		
+		Pair<Integer,Integer>p;
+		
+		Stack<JTextField>stack=new Stack<JTextField>();//helps to backtrack
+		Stack<Pair<Integer,Integer>>boardStack=new Stack<Pair<Integer,Integer>>();
+		
+		JPanel jp=new JPanel();
+		JTextField jtxtField=new JTextField();
+		
+		Component[] container=gwFrame.getContentPane().getComponents();
+		
+		
+		while(!checkBoardSolved()) {
+			jp=(JPanel) container[panel];
+			jtxtField=(JTextField) jp.getComponent(txtField);
+			row=gw.checkRow(panel, txtField);
+			col=gw.checkCol(panel, txtField);
+			
+			if(jtxtField.isEditable()) {
+				
+				
+				if(checkValid(row,col,val)) {
+					jtxtField.setText(val+"");
+					val=1;
+					stack.add(jtxtField);
+					p=new Pair(row,col);
+					boardStack.add(p);
+					
+					if(txtField==8) {
+						panel=panel+1;
+						txtField=0;
+					}else {
+						txtField=txtField+1;
+						
+					}
+					
+				}
+				else {
+					if(val==9) {
+						jtxtField.setText("");
+						board[row][col]=0;
+						if(stack.size()==0) {
+							return false;
+						}
+						p=boardStack.remove(boardStack.size()-1);
+						row=p.getKey();
+						col=p.getValue();
+						jtxtField=stack.remove(stack.size()-1);
+						
+						while(jtxtField.getText().equals("9")) {
+							jtxtField.setText("");
+							board[row][col]=0;
+							if(stack.size()==0) {
+								return false;
+							}
+							
+							p=boardStack.remove(boardStack.size()-1);
+							row=p.getKey();
+							col=p.getValue();
+							jtxtField=stack.remove(stack.size()-1);
+							
+						}
+						
+						panel=getPanel(row,col);
+						txtField=getTxtField(row,col);
+						val=Integer.parseInt(jtxtField.getText())+1;
+					}
+					else {
+						val=val+1;
+					}
+				}
+			}
+			else {
+				if(txtField==8) {
+					panel=panel+1;
+					txtField=0;
+				}else {
+					txtField=txtField+1;
+					
+				}
+			}
+			
+		}
+		return true;
+		
+		
+		
 	}
 	 
 		
