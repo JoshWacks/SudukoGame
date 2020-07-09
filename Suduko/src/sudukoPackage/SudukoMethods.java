@@ -6,24 +6,34 @@ import java.util.*;
 import javafx.util.Pair;
 
 import javax.swing.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 
 public class SudukoMethods {
 	
 	static private int[][] board=new int[9][9];
-	static private boolean helpOn=true;
 	
 	static private JFrame gwFrame;
 	static private GameWindow gw;
+	
+	static private boolean helpOn=true;
+	static private boolean solveOn=false;
+	
+	static private VirtSudukoMethods vsm;
 
 	public static void main(String[] args) {
 
-		displayBoard();
 		gw=new GameWindow();
 		gwFrame=gw.frame;
-		makePresetBoard();
+		startGame();
+//		//makePresetBoard();
 		gwFrame.setVisible(true);
-		System.out.println(solve());
+//		startGame();
+//		//solve();
+//		
+		
+		vsm=new VirtSudukoMethods();
+		
 		
 	}
 	
@@ -40,7 +50,7 @@ public class SudukoMethods {
 	
 	private static boolean checkValid(int row,int col,int num) {
 //		System.out.println("Row: "+row+" Col: "+col+" num: "+num);
-		
+
 		for(int i=0;i<9;i++) {//row check
 
 			if(board[row][i]==num && i!=col) {//changes the column and makes sure not the same place as the entered number
@@ -162,8 +172,16 @@ public class SudukoMethods {
 		return true;
 	}
 	
-	private void flashField(JTextField txtField) {
+	private void flashField(JTextField txtField,String type) {
 		long use=400;
+		Color clr = null;
+		if(type.equals("error")) {
+			clr=Color.RED;
+		}
+		else if(type.equals("nine")) {
+			clr=Color.CYAN;
+		}
+		final Color finalCLr=clr;
 		
 	    Thread th=new Thread(new Runnable()
 		{
@@ -172,16 +190,43 @@ public class SudukoMethods {
 		    {
 					try {
 						
-							txtField.setBackground(Color.RED);
+							txtField.setBackground(finalCLr);
 							Thread.sleep(use);
 							txtField.setBackground(Color.WHITE);
 							Thread.sleep(use);
-							txtField.setBackground(Color.RED);
+							txtField.setBackground(finalCLr);
 							Thread.sleep(use);
 							txtField.setBackground(Color.WHITE);
-
+							Thread.sleep(use);
+							txtField.setBackground(finalCLr);
+							Thread.sleep(use);
+							txtField.setBackground(Color.WHITE);
 							
-
+						
+						
+						if(type.equals("end")) {
+							long time=300;
+							txtField.setEditable(false);
+							txtField.setBackground(Color.blue);
+							Thread.sleep(time);
+							txtField.setBackground(Color.WHITE);
+							Thread.sleep(time);
+							txtField.setBackground(Color.PINK);
+							Thread.sleep(time);
+							txtField.setBackground(Color.WHITE);
+							Thread.sleep(time);
+							txtField.setBackground(Color.ORANGE);
+							Thread.sleep(time);
+							txtField.setBackground(Color.WHITE);
+							Thread.sleep(time);
+							txtField.setBackground(Color.green);
+							Thread.sleep(time);
+							txtField.setBackground(Color.WHITE);
+							Thread.sleep(time);
+							txtField.setBackground(Color.yellow);
+							Thread.sleep(time);
+							txtField.setBackground(Color.WHITE);
+						}
 						
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
@@ -194,6 +239,106 @@ public class SudukoMethods {
 	    th.start();
 	}
 	
+	private void flashSetNine(String type,int set) {
+		Component[] container=gwFrame.getContentPane().getComponents();
+		
+		int panel;
+		JPanel jp=new JPanel();
+		JPanel jPanel = null;
+		if(type.equals("panel")) {
+			jPanel=(JPanel) container[set];
+		}
+		
+		
+		int txtField;
+		JTextField jtxtField=new JTextField();
+		
+		for(int i=0;i<9;i++) {
+			if(type.equals("row")) {
+				panel=getPanel(set,i);
+				jp=(JPanel) container[panel];
+				txtField=getTxtField(set,i);
+				jtxtField=(JTextField) jp.getComponent(txtField);
+				flashField(jtxtField,"nine");
+				
+				
+			}
+			
+			else if(type.equals("col")) {
+				panel=getPanel(i,set);
+				jp=(JPanel) container[panel];
+				txtField=getTxtField(i,set);
+				jtxtField=(JTextField) jp.getComponent(txtField);
+				flashField(jtxtField,"nine");
+				
+				
+			}
+			else if(type.equals("panel")) {
+				
+				jtxtField=(JTextField) jPanel.getComponent(i);
+				flashField(jtxtField,"nine");
+			}
+		}
+		
+		
+	}
+	
+	public void checkSetNineCompleted(int row,int col) {
+		Set rowSet=new HashSet();//a set to keep track of all the numbers in the row
+		int rowVal;
+		Set colSet=new HashSet();//a set to keep track of all the numbers in the col
+		int colVal;
+		
+		Set panelSet=new HashSet();//a set to keep track of all the numbers in the panel
+		int panelVal = 0;
+		String temp;
+		
+		int panel=getPanel(row,col);
+		
+		Component[] container=gwFrame.getContentPane().getComponents();
+		
+		JPanel jp=(JPanel) container[panel];
+		JTextField jtxtField=new JTextField();
+		
+		for(int i=0;i<9;i++) {
+			rowVal=board[row][i];
+			colVal=board[i][col];
+			jtxtField=(JTextField) jp.getComponent(i);
+			temp=jtxtField.getText();
+			
+			if(!temp.equals("")) {
+				panelVal=Integer.parseInt(jtxtField.getText());
+			}
+
+			if(rowVal!=0) {
+				rowSet.add(rowVal);
+			}
+			if(colVal!=0) {
+				colSet.add(colVal);
+			}
+			if(panelVal!=0) {
+				panelSet.add(panelVal);
+			}
+				
+			
+		}
+
+		if(rowSet.size()==9) {
+			flashSetNine("row",row);
+		}
+		
+		if(colSet.size()==9) {
+			flashSetNine("col",col);
+		}
+		
+		if(panelSet.size()==9) {
+			flashSetNine("panel",panel);
+		}
+		
+		
+		
+	}
+	
 	public void addToBoard(int row,int col, int val,JTextField txtField) {
 		boolean numeric=checkBasicValid(val);
 		boolean valid=checkValid(row,col,val);
@@ -201,14 +346,27 @@ public class SudukoMethods {
 		if(numeric) {
 			if(valid&&helpOn) {
 				board[row][col]=val;
-				displayBoard();
+				if(!solveOn) {
+					checkSetNineCompleted(row,col);
+				}
+
+				if(checkBoardSolved()) {
+					endGame();
+				}
+
 			}else if(!helpOn) {
 				board[row][col]=val;
-				displayBoard();
+				if(!solveOn) {
+					checkSetNineCompleted(row,col);
+				}
+
+				if(checkBoardSolved()) {
+					endGame();
+				}
 			}
 		}
 		else if(!numeric) {
-			flashField(txtField);
+			flashField(txtField,"error");
 			JOptionPane.showMessageDialog( GameWindow.frame, "Please enter a valid number","Invalid Number",JOptionPane.INFORMATION_MESSAGE);
 			 
 		    Thread thRemoveText=new Thread(new Runnable()
@@ -227,7 +385,7 @@ public class SudukoMethods {
 		}
 
 		if(helpOn&&!valid){
-				flashField(txtField);
+				flashField(txtField,"error");
 				JOptionPane.showMessageDialog( GameWindow.frame, "There is a clash with that number","New Number",JOptionPane.INFORMATION_MESSAGE);
 				
 				 
@@ -268,6 +426,7 @@ public class SudukoMethods {
 		}
 		
 	}
+	
 	
 	private static void makePresetBoard() {
 		Component[] container=gwFrame.getContentPane().getComponents();
@@ -373,7 +532,9 @@ public class SudukoMethods {
 		
 		for(int i=0;i<9;i++) {
 			for(int j=0;j<9;j++) {
+				
 				val=board[i][j];
+
 				if(val==0) {
 					return false;
 				}
@@ -479,6 +640,9 @@ public class SudukoMethods {
 	}
 	
 	public static boolean solve() {
+		
+		solveOn=true;
+		helpOn=false;
 		int panel=0;
 		int txtField=0;
 		int val=1;
@@ -500,8 +664,8 @@ public class SudukoMethods {
 		while(!checkBoardSolved()) {
 			jp=(JPanel) container[panel];
 			jtxtField=(JTextField) jp.getComponent(txtField);
-			row=gw.checkRow(panel, txtField);
-			col=gw.checkCol(panel, txtField);
+			row=gw.getRow(panel, txtField);
+			col=gw.getCol(panel, txtField);
 			
 			if(jtxtField.isEditable()) {
 				
@@ -569,8 +733,57 @@ public class SudukoMethods {
 			
 		}
 		return true;
+	
+	}	
+	
+	
+	
+	private static void startGame() {
+		Cell[][] solvedBoard=vsm.createGame();
+		Component[] container=gwFrame.getContentPane().getComponents();
+		JPanel jp=new JPanel();
+		JTextField jtxtField=new JTextField();
+		Cell c;
 		
+		int row=0;
+		int col=0;
 		
+		for(int i=0;i<9;i++) {
+			jp=(JPanel) container[i];
+			for(int j=0;j<9;j++) {
+				row=gw.getRow(i, j);
+				col=gw.getCol(i, j);
+				c=solvedBoard[row][col];
+				if(!c.isEditable()) {//We only want it if it is not editable
+					jtxtField=(JTextField) jp.getComponent(j);
+					jtxtField.setText(c.getVal()+"");
+				}
+
+				
+			}
+		}
+	}
+	
+	private void endGameFlash() {
+		Component[] container=gwFrame.getContentPane().getComponents();
+		
+		JPanel jp=new JPanel();
+		JTextField jtxtField=new JTextField();
+		
+		for(int i=0;i<9;i++) {
+			jp=(JPanel) container[i];
+			for(int j=0;j<9;j++) {
+				jtxtField=(JTextField) jp.getComponent(j);
+				flashField(jtxtField,"end");
+				
+			}
+		}
+		
+	}
+	
+	private void endGame() {
+		endGameFlash();
+	
 		
 	}
 	 

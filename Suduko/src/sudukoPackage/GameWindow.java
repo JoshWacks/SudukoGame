@@ -74,8 +74,8 @@ public class GameWindow {
 				txtField.setFont(new Font("Nirmala UI Semilight", Font.BOLD, 23));
 				txtField.setBorder(border);
 				
-				row=checkRow(i,j);
-				col=checkCol(i,j);
+				row=getRow(i,j);
+				col=getCol(i,j);
 				
 				final int r=row;
 				final int c=col;
@@ -103,7 +103,7 @@ public class GameWindow {
 								num=-1;
 							}
 							sm.addToBoard(r, c, num,txtField);
-							System.out.println(sm.checkBoardSolved());
+							
 						}
 					//	System.out.print("row: "+r+" col: "+c+" num: "+num );
 						
@@ -125,7 +125,7 @@ public class GameWindow {
 								num=-1;
 							}
 							sm.addToBoard(r, c, num,txtField);
-							System.out.println(sm.checkBoardSolved());
+							
 						}
 						
 					}
@@ -145,7 +145,7 @@ public class GameWindow {
 								num=-1;
 							}
 							sm.addToBoard(r, c, num,txtField);
-							System.out.println(sm.checkBoardSolved());
+							
 						}
 						
 					}
@@ -157,7 +157,7 @@ public class GameWindow {
 		}
 	}
 	
-	public int checkRow(int i,int j) {
+	public int getRow(int i,int j) {
 		if(i==0||i==1||i==2) {
 			if(j==0||j==1||j==2) {
 				return 0;
@@ -207,7 +207,7 @@ public class GameWindow {
 		return 0;
 	}
 	
-	public int checkCol(int i,int j) {
+	public int getCol(int i,int j) {
 		if(i==0||i==3||i==6) {
 			if(j==0||j==3||j==6) {
 				return 0;
