@@ -4,19 +4,31 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 import java.awt.GridLayout;
+import java.awt.event.ActionListener;
+
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.border.AbstractBorder;
 import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import javafx.event.ActionEvent;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+
 public class GameWindow {
 
 	public static JFrame frame;
+	public static JPanel mainPanel;
 	private static SudukoMethods sm;
 
 
@@ -48,11 +60,87 @@ public class GameWindow {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 600, 500);
+		frame.getContentPane().setBackground(new Color(0, 0, 0));
+		frame.setBounds(100, 100, 800, 500);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
-		frame.getContentPane().setLayout(new GridLayout(3, 3, 0, 0));
+		frame.getContentPane().setLayout(null);
+		
+		mainPanel = new JPanel();
+		mainPanel.setBounds(0, 0, 600, 471);
+		frame.getContentPane().add(mainPanel);
+		mainPanel.setLayout(new GridLayout(3, 3, 0, 0));
+		
+		JLabel lblHeading = new JLabel("SUDOKO");
+		lblHeading.setFont(new Font("Ravie", Font.BOLD, 28));
+		lblHeading.setHorizontalAlignment(SwingConstants.CENTER);
+		lblHeading.setForeground(new Color(51, 102, 255));
+		lblHeading.setBounds(610, 20, 174, 39);
+		frame.getContentPane().add(lblHeading);
+		
+		
+		JButton btnSolve = new JButton("SOLVE");
+		btnSolve.setToolTipText("Press here to solve the current sudoko board.\r\n");
+		btnSolve.setFont(new Font("Sitka Display", Font.BOLD, 21));
+		btnSolve.setVerticalTextPosition(AbstractButton.CENTER);
+		btnSolve.setHorizontalTextPosition(AbstractButton.CENTER); 
+		btnSolve.setBackground(new Color(255, 102, 0));
+		btnSolve.setBounds(630, 290, 140, 40);
+		btnSolve.setForeground(Color.BLACK);
+		
+		AbstractBorder border = new TextBubbleBorder(Color.BLACK,3,16,1);
+		btnSolve.setBorder(border);
+		
+		btnSolve.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(java.awt.event.ActionEvent e) {
+				sm.showSolution();
+				
+			}
+		});
+		
+		frame.getContentPane().add(btnSolve);
+		
+	
+		JButton btnNewGame = new JButton("NEW GAME");
+		btnNewGame.setVerticalTextPosition(SwingConstants.CENTER);
+		btnNewGame.setToolTipText("Press here to start a new game");
+		btnNewGame.setHorizontalTextPosition(SwingConstants.CENTER);
+		btnNewGame.setForeground(Color.BLACK);
+		btnNewGame.setFont(new Font("Sitka Display", Font.BOLD, 21));
+		btnNewGame.setBackground(new Color(0, 204, 51));
+		btnNewGame.setBounds(630, 340, 140, 40);
+
+		AbstractBorder borderN = new TextBubbleBorder(Color.BLACK,3,16,1);
+		btnNewGame.setBorder(borderN);
+		
+		frame.getContentPane().add(btnNewGame);
+		
+		JButton btnExit = new JButton("EXIT");
+		btnExit.setToolTipText("Press here to exit the game.\r\n");
+		btnExit.setFont(new Font("Sitka Display", Font.BOLD, 21));
+		btnExit.setVerticalTextPosition(AbstractButton.CENTER);
+		btnExit.setHorizontalTextPosition(AbstractButton.CENTER); 
+		btnExit.setBackground(new Color(255, 0, 0));
+		btnExit.setBounds(630, 390, 140, 40);
+		btnExit.setForeground(Color.BLACK);
+
+		AbstractBorder borderE = new TextBubbleBorder(Color.BLACK,3,16,1);
+		btnExit.setBorder(borderE);
+		
+		frame.getContentPane().add(btnExit);
+		
+
+		
+
+
+		
+		
+		
+		
 		sm=new SudukoMethods();
+				
 		makeBoard();
 		
 		
@@ -153,7 +241,7 @@ public class GameWindow {
 				
 				panel.add(txtField);
 			}
-			frame.getContentPane().add(panel);
+			mainPanel.add(panel);
 		}
 	}
 	

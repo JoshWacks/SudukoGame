@@ -1,5 +1,7 @@
 package sudukoPackage;
 
+//We need to use a cell in our virtual board so we can add an editable element
+
 public class Cell {
 	private int row;
 	private int col;
