@@ -20,7 +20,11 @@ import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import com.sun.glass.events.WindowEvent;
+
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -30,6 +34,10 @@ public class GameWindow {
 	public static JFrame frame;
 	public static JPanel mainPanel;
 	private static SudukoMethods sm;
+	private static VirtSudukoMethods vsm;
+	
+	private static boolean mistakesOn=true;
+	public static JPanel pnlMistakes;
 
 
 	/**
@@ -52,6 +60,10 @@ public class GameWindow {
 	 * Create the application.
 	 */
 	public GameWindow() {
+		
+		sm=new SudukoMethods();
+		vsm=new VirtSudukoMethods();
+		frame = new JFrame();
 		initialize();
 	}
 
@@ -59,7 +71,8 @@ public class GameWindow {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
+		
+		
 		frame.getContentPane().setBackground(new Color(0, 0, 0));
 		frame.setBounds(100, 100, 800, 500);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -72,20 +85,46 @@ public class GameWindow {
 		mainPanel.setLayout(new GridLayout(3, 3, 0, 0));
 		
 		JLabel lblHeading = new JLabel("SUDOKO");
-		lblHeading.setFont(new Font("Ravie", Font.BOLD, 28));
+		lblHeading.setFont(new Font("Ravie", Font.BOLD, 29));
 		lblHeading.setHorizontalAlignment(SwingConstants.CENTER);
 		lblHeading.setForeground(new Color(51, 102, 255));
 		lblHeading.setBounds(610, 20, 174, 39);
 		frame.getContentPane().add(lblHeading);
 		
+		JLabel lblDifficulty = new JLabel("");
+		lblDifficulty.setText(vsm.getDifficulty().toUpperCase());
+		lblDifficulty.setForeground(new Color(153, 0, 51));
+		lblDifficulty.setFont(new Font("Ravie", Font.BOLD, 18));
+		lblDifficulty.setBounds(635, 66, 130, 20);
+		frame.getContentPane().add(lblDifficulty);
 		
+		JLabel lblMistakes = new JLabel("Mistakes");
+		lblMistakes.setForeground(new Color(204, 0, 0));
+		lblMistakes.setFont(new Font("Sitka Display", Font.BOLD, 23));
+		lblMistakes.setBounds(653, 157, 94, 15);
+		frame.getContentPane().add(lblMistakes);
+		
+		pnlMistakes = new JPanel();
+		pnlMistakes.setBackground(new Color(0, 0, 0));
+		pnlMistakes.setBounds(630, 185, 140, 27);
+		frame.getContentPane().add(pnlMistakes);
+				
+		
+		makeButtons();
+	
+		makeBoard();
+		
+		
+	}
+	
+	private void makeButtons() {
 		JButton btnSolve = new JButton("SOLVE");
 		btnSolve.setToolTipText("Press here to solve the current sudoko board.\r\n");
 		btnSolve.setFont(new Font("Sitka Display", Font.BOLD, 21));
 		btnSolve.setVerticalTextPosition(AbstractButton.CENTER);
 		btnSolve.setHorizontalTextPosition(AbstractButton.CENTER); 
 		btnSolve.setBackground(new Color(255, 102, 0));
-		btnSolve.setBounds(630, 290, 140, 40);
+		btnSolve.setBounds(630, 310, 140, 40);
 		btnSolve.setForeground(Color.BLACK);
 		
 		AbstractBorder border = new TextBubbleBorder(Color.BLACK,3,16,1);
@@ -110,10 +149,37 @@ public class GameWindow {
 		btnNewGame.setForeground(Color.BLACK);
 		btnNewGame.setFont(new Font("Sitka Display", Font.BOLD, 21));
 		btnNewGame.setBackground(new Color(0, 204, 51));
-		btnNewGame.setBounds(630, 340, 140, 40);
+		btnNewGame.setBounds(630, 360, 140, 40);
 
 		AbstractBorder borderN = new TextBubbleBorder(Color.BLACK,3,16,1);
 		btnNewGame.setBorder(borderN);
+		btnNewGame.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(java.awt.event.ActionEvent e) {
+				sm.clearBoards();
+				vsm.clearBoard();
+				sm.setClr(null);
+				
+				JPanel jp;
+				JTextField txtField;
+				for(int i=0;i<9;i++) {
+					jp=(JPanel) mainPanel.getComponent(i);
+					for(int j=0;j<9;j++) {
+						txtField=(JTextField) jp.getComponent(j);
+						txtField.setText("");
+						txtField.setEditable(true);
+					}
+				}
+				frame.setVisible(false);
+				WelcomeScreen ws=new WelcomeScreen();
+				ws.frmSudoko.setVisible(true);
+				
+			}
+				
+			
+		});
+		
 		
 		frame.getContentPane().add(btnNewGame);
 		
@@ -123,28 +189,30 @@ public class GameWindow {
 		btnExit.setVerticalTextPosition(AbstractButton.CENTER);
 		btnExit.setHorizontalTextPosition(AbstractButton.CENTER); 
 		btnExit.setBackground(new Color(255, 0, 0));
-		btnExit.setBounds(630, 390, 140, 40);
+		btnExit.setBounds(630, 410, 140, 40);
 		btnExit.setForeground(Color.BLACK);
 
 		AbstractBorder borderE = new TextBubbleBorder(Color.BLACK,3,16,1);
 		btnExit.setBorder(borderE);
+		btnExit.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(java.awt.event.ActionEvent e) {
+				Platform.exit();
+				System.exit(0);
+				
+			}
+				
+			
+		});
+		
 		
 		frame.getContentPane().add(btnExit);
 		
 
 		
-
-
-		
-		
-		
-		
-		sm=new SudukoMethods();
-				
-		makeBoard();
-		
-		
 	}
+	
 	
 	private void makeBoard() {
 		Border border=BorderFactory.createLineBorder(Color.black);
@@ -159,7 +227,7 @@ public class GameWindow {
 			for(int j=0;j<9;j++) {
 				JTextField txtField=new JTextField();
 				txtField.setHorizontalAlignment(SwingConstants.CENTER);
-				txtField.setFont(new Font("Nirmala UI Semilight", Font.BOLD, 23));
+				txtField.setFont(new Font("Nirmala UI Semilight", Font.BOLD, 24));
 				txtField.setBorder(border);
 				
 				row=getRow(i,j);
@@ -244,6 +312,7 @@ public class GameWindow {
 			mainPanel.add(panel);
 		}
 	}
+	
 	
 	public int getRow(int i,int j) {
 		if(i==0||i==1||i==2) {

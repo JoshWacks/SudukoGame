@@ -16,6 +16,18 @@ public class VirtSudukoMethods {
 	static private String difficulty="extreme";
 	static private Cell[][] solvedBoard=new Cell[9][9];
 	
+	
+	
+	public static String getDifficulty() {
+		return difficulty;
+	}
+
+
+	public static void setDifficulty(String difficulty) {
+		VirtSudukoMethods.difficulty = difficulty;
+	}
+
+
 	private static void initializeGame() {
 		for(int i=0;i<9;i++) {
 			for(int j=0;j<9;j++) {
@@ -207,11 +219,15 @@ public class VirtSudukoMethods {
 		final boolean[] timer= {false};
 		
 		long start = System.currentTimeMillis();
-		long end = start + 6*1000; // 60 seconds * 1000 ms/sec
+		long end = 3*1000; // 6 seconds * 1000 ms/sec
 		
 		while(!checkBoardSolved()) {//while the board is not solved
-			
+		//	System.out.println(System.currentTimeMillis()-start);
 			//displaySolvedBoard();
+			if(System.currentTimeMillis()-start > end) {
+		//		System.out.println("False");
+				return false;
+			}
 			
 			c=solvedBoard[row][col]; //Gets the cell at a specific row and column
 			
@@ -228,7 +244,11 @@ public class VirtSudukoMethods {
 					else {
 						col=col+1;
 					}
-				}else {//uh-uh that is not a valid number
+				}
+				else {//uh-uh that is not a valid number
+					if(System.currentTimeMillis()-start > end) {
+						return false;
+					}
 					if(val==9) {//if we have tried to set it to all possible numbers,therefore must go backwards
 						c.setVal(0);//set that block to -1, to prevent incorrect clashes
 						if(stack.size()==0) {
@@ -263,9 +283,7 @@ public class VirtSudukoMethods {
 					col=col+1;
 				}
 			}
-			if(System.currentTimeMillis() > end) {
-				return false;
-			}
+			
 		}
 		return true;
 		
@@ -274,21 +292,14 @@ public class VirtSudukoMethods {
 	
 	private static void makeRandomGame() {
 		
-		solvedBoard[0][0]=new Cell(0,0,ThreadLocalRandom.current().nextInt(1,9),false);
+		solvedBoard[0][0]=new Cell(0,0,ThreadLocalRandom.current().nextInt(2,9),false);
 		
 		int randomRow;
 		int randomCol;
 		int randomVal;
-		int numRows = 0;
-		int numCols = 0;
-		
-		switch(difficulty) {
-			case "extreme":
-				numRows=6;
-				numCols=3;
-				break;
-				
-		}
+		int numRows = 5;
+		int numCols = 3;
+	
 		
 		for(int i=0;i<numRows;i++) {
 			randomRow = ThreadLocalRandom.current().nextInt(0,8);
@@ -318,9 +329,19 @@ public class VirtSudukoMethods {
 		while(!checkSolveable()) {
 			makeRandomGame();
 		}
-		displaySolvedBoard();
+		//displaySolvedBoard();
 		return solvedBoard;
 		
+	}
+	
+	public void clearBoard() {
+		for(int i=0;i<9;i++) {
+			for(int j=0;j<0;j++) {
+				Cell c=new Cell(i,j,0,true);
+				solvedBoard[i][j]=c;
+
+			}
+		}
 	}
 	
 }

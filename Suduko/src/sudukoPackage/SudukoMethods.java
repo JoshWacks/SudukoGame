@@ -12,24 +12,26 @@ import java.util.concurrent.ThreadLocalRandom;
 public class SudukoMethods {
 	
 	static private int[][] board=new int[9][9];
+	static private Cell[][] solvedBoard;
 	
 	static private JFrame gwFrame;
 	static private GameWindow gw;
 	
+	static private String diff;
 	static private boolean helpOn=true;
 	static private boolean mistakesOn=true;
 	static private int numMistakes=0;
+	static private int maxMistakes=3;
 	static private boolean solveOn=false;
 	
 	static private VirtSudukoMethods vsm;
 	
 	static private JPanel mainPanel;
 	static private Component[] container;
+	static private Color clrSelected;
 	
-	static private Cell[][] solvedBoard;
-
-	public static void main(String[] args) {
-
+	
+	public void run() {
 		gw=new GameWindow();
 		gwFrame=gw.frame;
 		mainPanel=gw.mainPanel;
@@ -37,12 +39,21 @@ public class SudukoMethods {
 		startGame();
 		
 		gwFrame.setVisible(true);
-
-
-		
 		vsm=new VirtSudukoMethods();
-		
-		
+	}
+	
+	public void setHelp(boolean b) {
+		helpOn=b;
+	}
+	public void setMistakes(boolean b) {
+		mistakesOn=b;
+	}
+	
+	public void setClr(Color clr) {
+		clrSelected=clr;
+	}
+	public Color getClr() {
+		return clrSelected;
 	}
 	
 	private boolean checkBasicValid(int num) {//checks if they are at least entering a valid input
@@ -188,7 +199,11 @@ public class SudukoMethods {
 			clr=Color.RED;
 		}
 		else if(type.equals("nine")) {
-			clr=Color.CYAN;
+			if(clrSelected.equals(Color.CYAN)) {
+				clr=Color.BLUE;
+			}else {
+				clr=Color.CYAN;
+			}	
 		}
 		final Color finalCLr=clr;
 		
@@ -351,6 +366,7 @@ public class SudukoMethods {
 		boolean numeric=checkBasicValid(val);
 		boolean valid=checkValid(row,col,val);
 
+
 		if(numeric) {
 			if(valid&&helpOn) {//valid entry 
 				board[row][col]=val;
@@ -381,7 +397,7 @@ public class SudukoMethods {
 				
 			}
 			
-			else if(!helpOn) {//help is not on
+			else if(!helpOn) {//help is not on so we add it regardless
 				board[row][col]=val;
 				if(!solveOn) {
 					checkSetNineCompleted(row,col);
@@ -395,6 +411,7 @@ public class SudukoMethods {
 			if(mistakesOn&&!valid) {//need to register they have made a mistake if mistakes are on
 				numMistakes++;
 				if(numMistakes==3) {
+					//TODO
 					//gameOver(); Code a game over method
 				}
 				
@@ -676,8 +693,12 @@ public class SudukoMethods {
 				col=gw.getCol(i, j);
 				c=solvedBoard[row][col];
 				
+				
 				jtxtField=(JTextField) jp.getComponent(j);
 				jtxtField.setText(c.getVal()+"");
+				if(!c.isEditable()) {
+					jtxtField.setBackground(clrSelected);
+				}
 				jtxtField.setEditable(false);
 
 				
@@ -687,15 +708,50 @@ public class SudukoMethods {
 	
 	
 	private static void startGame() {
-		solvedBoard=vsm.createGame();
+		solvedBoard=VirtSudukoMethods.createGame();
+		int numRows=0;
+		int numCols=0;
+		int randomRow;
+		int randomCol;
+		diff=VirtSudukoMethods.getDifficulty();
+		
+		switch(diff) {
+			case "extreme":
+				numRows=1;
+				numCols=1;
+				break;
+			case "hard":
+				numRows=3;
+				numCols=2;
+				break;
+			case "medium":
+				numRows=6;
+				numCols=3;
+				break;
+			case "easy":
+				numRows=8;
+				numCols=5;
+				break;
+		}
+		
+		for(int i=0;i<numRows;i++) {
+			randomRow = ThreadLocalRandom.current().nextInt(0,8);
+			for(int j=0;j<numCols;j++) {
+				
+				randomCol = ThreadLocalRandom.current().nextInt(0,8);
+				Cell c=solvedBoard[randomRow][randomCol];
+				Cell cNew=new Cell(c.getRow(),c.getCol(),c.getVal(),false);
+				solvedBoard[randomRow][randomCol]=cNew;
+				
+			}
+		}
 		
 		JPanel jp=new JPanel();
 		JTextField jtxtField=new JTextField();
-		Cell c;
 		
 		int row=0;
 		int col=0;
-		
+		Cell c;
 		for(int i=0;i<9;i++) {
 			jp=(JPanel) container[i];
 			for(int j=0;j<9;j++) {
@@ -706,6 +762,7 @@ public class SudukoMethods {
 					jtxtField=(JTextField) jp.getComponent(j);
 					jtxtField.setText(c.getVal()+"");
 					jtxtField.setEditable(false);
+					jtxtField.setBackground(clrSelected);
 				}
 
 				
@@ -730,9 +787,22 @@ public class SudukoMethods {
 	}
 	
 	private void endGame() {
-		endGameFlash();
+		if(!solveOn) {
+			endGameFlash();
+		}
 	
 		
+	}
+	
+	public void clearBoards() {
+		numMistakes=0;
+		for(int i=0;i<9;i++) {
+			for(int j=0;j<9;j++) {
+				Cell c=new Cell(i,j,0,true);
+				solvedBoard[i][j]=c;
+				board[i][j]=0;
+			}
+		}
 	}
 	 
 		
