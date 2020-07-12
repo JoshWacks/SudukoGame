@@ -1,6 +1,7 @@
 package sudukoPackage;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 
@@ -32,38 +33,25 @@ import javax.swing.JLabel;
 public class GameWindow {
 
 	public static JFrame frame;
-	public static JPanel mainPanel;
 	private static SudukoMethods sm;
 	private static VirtSudukoMethods vsm;
 	
 	private static boolean mistakesOn=true;
-	public static JPanel pnlMistakes;
+	private int mistakeNum;
+	
+	public static JPanel mainPanel;
+	DrawMistakes dm;
+	
 
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					GameWindow window = new GameWindow();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
-	/**
-	 * Create the application.
-	 */
 	public GameWindow() {
 		
 		sm=new SudukoMethods();
+		
 		vsm=new VirtSudukoMethods();
 		frame = new JFrame();
+		mistakesOn=sm.getMistakes();
 		initialize();
 	}
 
@@ -75,14 +63,18 @@ public class GameWindow {
 		
 		frame.getContentPane().setBackground(new Color(0, 0, 0));
 		frame.setBounds(100, 100, 800, 500);
+		Dimension dim=new Dimension(800,500);
+		frame.setPreferredSize(dim);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
 		frame.getContentPane().setLayout(null);
 		
 		mainPanel = new JPanel();
+		mainPanel.setPreferredSize(new Dimension(600, 471));
 		mainPanel.setBounds(0, 0, 600, 471);
 		frame.getContentPane().add(mainPanel);
 		mainPanel.setLayout(new GridLayout(3, 3, 0, 0));
+		
 		
 		JLabel lblHeading = new JLabel("SUDOKO");
 		lblHeading.setFont(new Font("Ravie", Font.BOLD, 29));
@@ -100,20 +92,36 @@ public class GameWindow {
 		
 		JLabel lblMistakes = new JLabel("Mistakes");
 		lblMistakes.setForeground(new Color(204, 0, 0));
-		lblMistakes.setFont(new Font("Sitka Display", Font.BOLD, 23));
-		lblMistakes.setBounds(653, 157, 94, 15);
+		lblMistakes.setFont(new Font("Sitka Displa8", Font.BOLD, 26));
+		lblMistakes.setBounds(640, 150, 110, 20);
 		frame.getContentPane().add(lblMistakes);
 		
-		pnlMistakes = new JPanel();
-		pnlMistakes.setBackground(new Color(0, 0, 0));
-		pnlMistakes.setBounds(630, 185, 140, 27);
-		frame.getContentPane().add(pnlMistakes);
-				
+		if(mistakesOn) {
+			dm=new DrawMistakes();
+			
+			dm.setBackground(Color.BLACK);
+			dm.setLocation(600, 185);
+			dm.setSize(190, 40);
+			frame.getContentPane().add(dm);
+			frame.pack();
+		}
 		
+		
+				
 		makeButtons();
 	
 		makeBoard();
 		
+		
+	}
+	
+	
+	public void setMistakeNum(int i) {
+		mistakeNum=i;
+
+		dm.setPoints(i);
+		
+		dm.repaint();
 		
 	}
 	
@@ -209,6 +217,7 @@ public class GameWindow {
 		
 		frame.getContentPane().add(btnExit);
 		
+		
 
 		
 	}

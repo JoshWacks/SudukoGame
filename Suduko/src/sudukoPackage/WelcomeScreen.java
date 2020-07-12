@@ -10,10 +10,14 @@ import javax.swing.border.AbstractBorder;
 
 import java.awt.Font;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import java.awt.Dimension;
 import javax.swing.JCheckBox;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerListModel;
+import javax.swing.JComboBox;
 
 public class WelcomeScreen {
 
@@ -21,33 +25,17 @@ public class WelcomeScreen {
 	private JLabel lblDifficulty;
 	private JButton btnMedium;
 	private JButton btnExtreme;
+	private JComboBox comboBoxNumMistakes;
 
 	private static VirtSudukoMethods vsm;
 	private static SudukoMethods sm;
 	
+	
 	private JCheckBox chckTips;
 	private JCheckBox chckMistakes;
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					WelcomeScreen window = new WelcomeScreen();
-					frmSudoko.setSize(new Dimension(675, 475));
-					window.frmSudoko.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
-	/**
-	 * Create the application.
-	 */
-	public WelcomeScreen() {
+	public WelcomeScreen() {//constructor
+		
 		sm=new SudukoMethods();
 		vsm=new VirtSudukoMethods();
 		initialize();
@@ -56,8 +44,10 @@ public class WelcomeScreen {
 	/**
 	 * Initialize the contents of the frame.
 	 */
+	@SuppressWarnings("unchecked")
 	private void initialize() {
 		frmSudoko = new JFrame();
+		frmSudoko.setSize(new Dimension(675, 475));
 
 		frmSudoko.setTitle("Sudoko");
 		
@@ -86,6 +76,21 @@ public class WelcomeScreen {
 		lblDifficulty.setBounds(475, 167, 162, 21);
 		frmSudoko.getContentPane().add(lblDifficulty);
 		
+		String[] nums= {"1","2","3","4","5"};
+		
+		comboBoxNumMistakes = new JComboBox(nums);
+		comboBoxNumMistakes.setToolTipText("Customize how many mistakes you are allowed before the game is over");
+		comboBoxNumMistakes.setFont(new Font("Sitka Display", Font.BOLD, 18));
+		comboBoxNumMistakes.setBounds(221, 334, 45, 25);
+		frmSudoko.getContentPane().add(comboBoxNumMistakes);
+
+		JLabel lblMax = new JLabel("Number of Mistakes");
+		lblMax.setToolTipText("Set the maximum number of mistakes you can make");
+		lblMax.setForeground(new Color(0, 102, 153));
+		lblMax.setFont(new Font("Sitka Display", Font.BOLD, 23));
+		lblMax.setBounds(10, 334, 201, 21);
+		frmSudoko.getContentPane().add(lblMax);
+		
 		
 		makeButtons();
 		makeColorButtons();
@@ -96,7 +101,7 @@ public class WelcomeScreen {
 		btnEasy.setForeground(new Color(0, 0, 0));
 		btnEasy.setBackground(new Color(102, 204, 0));
 		btnEasy.setFont(new Font("Sitka Display", Font.BOLD, 16));
-		btnEasy.setBounds(504, 200, 100, 30);
+		btnEasy.setBounds(508, 212, 100, 30);
 		
 		btnEasy.addActionListener(new ActionListener() {
 
@@ -116,7 +121,7 @@ public class WelcomeScreen {
 		btnMedium.setForeground(new Color(0, 0, 0));
 		btnMedium.setFont(new Font("Sitka Display", Font.BOLD, 16));
 		btnMedium.setBackground(new Color(204, 102, 0));
-		btnMedium.setBounds(504, 250, 100, 30);
+		btnMedium.setBounds(508, 262, 100, 30);
 		borderE = new TextBubbleBorder(Color.BLACK,3,16,1);
 		btnMedium.setBorder(borderE);
 		
@@ -136,7 +141,7 @@ public class WelcomeScreen {
 		btnHard.setForeground(new Color(0, 0, 0));
 		btnHard.setFont(new Font("Sitka Display", Font.BOLD, 16));
 		btnHard.setBackground(new Color(102, 204, 153));
-		btnHard.setBounds(504, 300, 100, 30);
+		btnHard.setBounds(508, 312, 100, 30);
 		borderE = new TextBubbleBorder(Color.BLACK,3,16,1);
 		btnHard.setBorder(borderE);
 		
@@ -156,7 +161,7 @@ public class WelcomeScreen {
 		btnExtreme.setForeground(new Color(0, 0, 0));
 		btnExtreme.setFont(new Font("Sitka Display", Font.BOLD, 16));
 		btnExtreme.setBackground(new Color(255, 0, 0));
-		btnExtreme.setBounds(504, 350, 100, 30);
+		btnExtreme.setBounds(508, 362, 100, 30);
 		borderE = new TextBubbleBorder(Color.BLACK,3,16,1);
 		btnExtreme.setBorder(borderE);
 		
@@ -179,27 +184,27 @@ public class WelcomeScreen {
 		JLabel lblTips = new JLabel("Tips On");
 		lblTips.setToolTipText("Check here if you want to be told you have placed a number in the wrong place");
 		lblTips.setForeground(new Color(0, 102, 153));
-		lblTips.setFont(new Font("Sitka Display", Font.BOLD, 26));
-		lblTips.setBounds(50, 213, 110, 21);
+		lblTips.setFont(new Font("Sitka Display", Font.BOLD, 23));
+		lblTips.setBounds(10, 212, 110, 21);
 		frmSudoko.getContentPane().add(lblTips);
 		
 		chckTips = new JCheckBox("");
 		chckTips.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		chckTips.setBackground(new Color(0, 0, 0));
-		chckTips.setBounds(210, 211, 21, 23);
+		chckTips.setBounds(220, 208, 21, 23);
 		frmSudoko.getContentPane().add(chckTips);
 		
 		JLabel lblMistakes = new JLabel("Mistakes On");
 		lblMistakes.setToolTipText("Check here to set a limit to your number of mistakes");
 		lblMistakes.setForeground(new Color(0, 102, 153));
-		lblMistakes.setFont(new Font("Sitka Display", Font.BOLD, 26));
-		lblMistakes.setBounds(50, 280, 141, 21);
+		lblMistakes.setFont(new Font("Sitka Display", Font.BOLD, 23));
+		lblMistakes.setBounds(10, 272, 141, 21);
 		frmSudoko.getContentPane().add(lblMistakes);
 		
 		chckMistakes = new JCheckBox("");
 		chckMistakes.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		chckMistakes.setBackground(Color.BLACK);
-		chckMistakes.setBounds(210, 275, 21, 23);
+		chckMistakes.setBounds(220, 267, 21, 23);
 		frmSudoko.getContentPane().add(chckMistakes);
 		
 		JLabel lblColor = new JLabel("Select a colour");
@@ -214,15 +219,20 @@ public class WelcomeScreen {
 	}
 	
 	private void makeColorButtons() {
+		AbstractBorder basicBorder = new TextBubbleBorder(Color.WHITE,2,16,1);
+		ArrayList<JButton> buttonArr=new ArrayList<JButton>();
+		
 		JButton btnBlue = new JButton("Blue");
 		btnBlue.setForeground(new Color(255, 255, 255));
 		btnBlue.setFont(new Font("Sitka Display", Font.BOLD, 16));
 		btnBlue.setBackground(new Color(0, 0, 0));
-		btnBlue.setBounds(306, 210, 100, 30);
+		btnBlue.setBounds(310, 210, 100, 30);
+		btnBlue.setBorder(basicBorder);
 		btnBlue.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(java.awt.event.ActionEvent e) {
+				resetBorders(buttonArr);
 				sm.setClr(Color.CYAN);
 				AbstractBorder border = new TextBubbleBorder(Color.BLUE,4,16,1);
 				btnBlue.setBorder(border);
@@ -235,11 +245,13 @@ public class WelcomeScreen {
 		btnMagenta.setForeground(Color.WHITE);
 		btnMagenta.setFont(new Font("Sitka Display", Font.BOLD, 16));
 		btnMagenta.setBackground(Color.BLACK);
-		btnMagenta.setBounds(306, 260, 100, 30);
+		btnMagenta.setBounds(310, 260, 100, 30);
+		btnMagenta.setBorder(basicBorder);
 		btnMagenta.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(java.awt.event.ActionEvent e) {
+				resetBorders(buttonArr);
 				sm.setClr(Color.MAGENTA);
 				AbstractBorder border = new TextBubbleBorder(Color.BLUE,4,16,1);
 				btnMagenta.setBorder(border);
@@ -251,11 +263,13 @@ public class WelcomeScreen {
 		btnGreen.setForeground(Color.WHITE);
 		btnGreen.setFont(new Font("Sitka Display", Font.BOLD, 16));
 		btnGreen.setBackground(Color.BLACK);
-		btnGreen.setBounds(306, 310, 100, 30);
+		btnGreen.setBounds(310, 310, 100, 30);
+		btnGreen.setBorder(basicBorder);
 		btnGreen.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(java.awt.event.ActionEvent e) {
+				resetBorders(buttonArr);
 				sm.setClr(Color.GREEN);
 				AbstractBorder border = new TextBubbleBorder(Color.BLUE,4,16,1);
 				btnGreen.setBorder(border);
@@ -267,17 +281,34 @@ public class WelcomeScreen {
 		btnOrange.setForeground(Color.WHITE);
 		btnOrange.setFont(new Font("Sitka Display", Font.BOLD, 16));
 		btnOrange.setBackground(Color.BLACK);
-		btnOrange.setBounds(306, 360, 100, 30);
+		btnOrange.setBounds(310, 360, 100, 30);
+		btnOrange.setBorder(basicBorder);
 		btnOrange.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(java.awt.event.ActionEvent e) {
+				resetBorders(buttonArr);
 				sm.setClr(Color.ORANGE);
 				AbstractBorder border = new TextBubbleBorder(Color.BLUE,4,16,1);
 				btnOrange.setBorder(border);
 			}
 		});
 		frmSudoko.getContentPane().add(btnOrange);
+		
+		buttonArr.add(btnOrange);
+		buttonArr.add(btnBlue);
+		buttonArr.add(btnMagenta);
+		buttonArr.add(btnGreen);
+		
+		
+		
+	}
+	
+	private void resetBorders(ArrayList<JButton>arr) {
+		AbstractBorder basicBorder = new TextBubbleBorder(Color.WHITE,2,16,1);
+		for(JButton jb:arr) {
+			jb.setBorder(basicBorder);
+		}
 	}
 	
 	private void btnSelected(String diff) {
@@ -290,6 +321,9 @@ public class WelcomeScreen {
 			
 			boolean mistakes=chckMistakes.isSelected();
 			sm.setMistakes(mistakes);
+			
+			int numMistakes=Integer.parseInt((String) comboBoxNumMistakes.getSelectedItem());
+			sm.setNumMaxMistakes(numMistakes);
 			
 			vsm.setDifficulty(diff);
 			frmSudoko.setVisible(false);

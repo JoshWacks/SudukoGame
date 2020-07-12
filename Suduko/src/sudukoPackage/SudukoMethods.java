@@ -49,6 +49,13 @@ public class SudukoMethods {
 		mistakesOn=b;
 	}
 	
+	public boolean getMistakes(){
+		return mistakesOn;
+	}
+	public void setNumMaxMistakes(int n) {
+		maxMistakes=n;
+	}
+	
 	public void setClr(Color clr) {
 		clrSelected=clr;
 	}
@@ -410,9 +417,11 @@ public class SudukoMethods {
 			
 			if(mistakesOn&&!valid) {//need to register they have made a mistake if mistakes are on
 				numMistakes++;
+
+				gw.setMistakeNum(numMistakes);
 				if(numMistakes==3) {
 					//TODO
-					//gameOver(); Code a game over method
+					System.out.println("Game Over");
 				}
 				
 				
