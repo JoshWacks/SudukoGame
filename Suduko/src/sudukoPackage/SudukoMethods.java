@@ -419,9 +419,9 @@ public class SudukoMethods {
 				numMistakes++;
 
 				gw.setMistakeNum(numMistakes);
-				if(numMistakes==3) {
+				if(numMistakes==maxMistakes) {
 					//TODO
-					System.out.println("Game Over");
+					gw.gameOver();
 				}
 				
 				

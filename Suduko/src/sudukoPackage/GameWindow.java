@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -12,10 +14,13 @@ import javax.swing.JOptionPane;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.AbstractBorder;
 import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
@@ -29,6 +34,7 @@ import javafx.event.EventHandler;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JToggleButton;
 
 public class GameWindow {
 
@@ -37,13 +43,15 @@ public class GameWindow {
 	private static VirtSudukoMethods vsm;
 	
 	private static boolean mistakesOn=true;
-	private int mistakeNum;
 	
 	public static JPanel mainPanel;
 	DrawMistakes dm;
 	
+	private JButton btnNewGame;
+	private JButton btnExit;
 
-
+	private JToggleButton tglbtnPencil;
+	private boolean pencilOn=false;
 
 	public GameWindow() {
 		
@@ -76,27 +84,40 @@ public class GameWindow {
 		mainPanel.setLayout(new GridLayout(3, 3, 0, 0));
 		
 		
-		JLabel lblHeading = new JLabel("SUDOKO");
-		lblHeading.setFont(new Font("Ravie", Font.BOLD, 29));
+		JLabel lblHeading = new JLabel("SERENE");
+		lblHeading.setFont(new Font("Ravie", Font.BOLD, 31));
 		lblHeading.setHorizontalAlignment(SwingConstants.CENTER);
 		lblHeading.setForeground(new Color(51, 102, 255));
-		lblHeading.setBounds(610, 20, 174, 39);
+		lblHeading.setBounds(605, 0, 184,50);
 		frame.getContentPane().add(lblHeading);
+		
+		JLabel lblHeading2 = new JLabel("SUDOKO");
+		lblHeading2.setHorizontalAlignment(SwingConstants.CENTER);
+		lblHeading2.setForeground(new Color(51, 102, 255));
+		lblHeading2.setFont(new Font("Ravie", Font.BOLD, 27));
+		lblHeading2.setBounds(620, 48, 154, 50);
+		frame.getContentPane().add(lblHeading2);
 		
 		JLabel lblDifficulty = new JLabel("");
 		lblDifficulty.setText(vsm.getDifficulty().toUpperCase());
 		lblDifficulty.setForeground(new Color(153, 0, 51));
-		lblDifficulty.setFont(new Font("Ravie", Font.BOLD, 18));
-		lblDifficulty.setBounds(635, 66, 130, 20);
+		lblDifficulty.setFont(new Font("Ravie", Font.BOLD, 21));
+		lblDifficulty.setBounds(630, 106, 150,32);
 		frame.getContentPane().add(lblDifficulty);
 		
-		JLabel lblMistakes = new JLabel("Mistakes");
-		lblMistakes.setForeground(new Color(204, 0, 0));
-		lblMistakes.setFont(new Font("Sitka Displa8", Font.BOLD, 26));
-		lblMistakes.setBounds(640, 150, 110, 20);
-		frame.getContentPane().add(lblMistakes);
+		tglbtnPencil = new JToggleButton("PENCIL ON");
+		tglbtnPencil.setBackground(new Color(0, 102, 204));
+		tglbtnPencil.setFont(new Font("Sitka Displa8", Font.BOLD, 26));
+		tglbtnPencil.setBounds(605, 267, 179, 32);
+		frame.getContentPane().add(tglbtnPencil);
+		
 		
 		if(mistakesOn) {
+			JLabel lblMistakes = new JLabel("Mistakes");
+			lblMistakes.setForeground(new Color(204, 0, 0));
+			lblMistakes.setFont(new Font("Sitka Displa8", Font.BOLD, 26));
+			lblMistakes.setBounds(640, 150, 110, 20);
+			frame.getContentPane().add(lblMistakes);
 			dm=new DrawMistakes();
 			
 			dm.setBackground(Color.BLACK);
@@ -107,17 +128,50 @@ public class GameWindow {
 		}
 		
 		
+		
+		
+		
 				
 		makeButtons();
 	
 		makeBoard();
 		
 		
+		
+	}
+	
+	public void gameOver() {
+		JPanel pnlGameOver = new JPanel();
+		pnlGameOver.setBackground(Color.BLACK);
+		pnlGameOver.setBounds(0, 100, 600, 300);
+		frame.getContentPane().add(pnlGameOver);
+		
+		JLabel lblGameOver = new JLabel("Game Over");
+		lblGameOver.setBackground(new Color(0, 0, 0));
+		lblGameOver.setForeground(new Color(255, 0, 0));
+		lblGameOver.setBounds(230, 10, 200, 50);
+		lblGameOver.setFont(new Font("Ravie", Font.BOLD, 28));
+		pnlGameOver.add(lblGameOver);
+		
+		JLabel labelMaxMistakes = new JLabel("You reached the maximum number of mistakes");
+		labelMaxMistakes.setForeground(Color.CYAN);
+		labelMaxMistakes.setFont(new Font("Ravie", Font.BOLD, 16));
+		labelMaxMistakes.setBounds(150,130,200,50);
+		pnlGameOver.add(labelMaxMistakes);
+		
+		btnExit.setBounds(100,250,100,30);
+		btnNewGame.setBounds(200,250,100,0);
+		pnlGameOver.add(btnExit);
+		pnlGameOver.add(btnNewGame);
+		
+		
+		
+		mainPanel.setVisible(false);
 	}
 	
 	
 	public void setMistakeNum(int i) {
-		mistakeNum=i;
+
 
 		dm.setPoints(i);
 		
@@ -142,6 +196,10 @@ public class GameWindow {
 
 			@Override
 			public void actionPerformed(java.awt.event.ActionEvent e) {
+				mistakesOn=false;
+				tglbtnPencil.setSelected(false);
+				pencilOn=false;
+				sm.setMistakes(false);
 				sm.showSolution();
 				
 			}
@@ -150,7 +208,7 @@ public class GameWindow {
 		frame.getContentPane().add(btnSolve);
 		
 	
-		JButton btnNewGame = new JButton("NEW GAME");
+		btnNewGame = new JButton("NEW GAME");
 		btnNewGame.setVerticalTextPosition(SwingConstants.CENTER);
 		btnNewGame.setToolTipText("Press here to start a new game");
 		btnNewGame.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -191,7 +249,7 @@ public class GameWindow {
 		
 		frame.getContentPane().add(btnNewGame);
 		
-		JButton btnExit = new JButton("EXIT");
+		btnExit = new JButton("EXIT");
 		btnExit.setToolTipText("Press here to exit the game.\r\n");
 		btnExit.setFont(new Font("Sitka Display", Font.BOLD, 21));
 		btnExit.setVerticalTextPosition(AbstractButton.CENTER);
@@ -217,14 +275,13 @@ public class GameWindow {
 		
 		frame.getContentPane().add(btnExit);
 		
-		
-
-		
 	}
 	
 	
 	private void makeBoard() {
 		Border border=BorderFactory.createLineBorder(Color.black);
+		
+
 		Border panelBorder=BorderFactory.createMatteBorder(3, 3, 3, 3, Color.black);
 		int row=0;
 		int col=0;
@@ -238,6 +295,7 @@ public class GameWindow {
 				txtField.setHorizontalAlignment(SwingConstants.CENTER);
 				txtField.setFont(new Font("Nirmala UI Semilight", Font.BOLD, 24));
 				txtField.setBorder(border);
+				txtField.setForeground(Color.BLACK);
 				
 				row=getRow(i,j);
 				col=getCol(i,j);
@@ -245,82 +303,177 @@ public class GameWindow {
 				final int r=row;
 				final int c=col;
 				
-				txtField.getDocument().addDocumentListener(new DocumentListener() {
-					String str;
-					int num=0;
-					
-					
-					
-					
-					@Override
-					public void insertUpdate(DocumentEvent e) {
-						str=txtField.getText();
-						if(str.equals("")) {
-							num=0;
-						}
-						
-						else {
-							try {
-								num=Integer.parseInt(str);
-								
-							}
-							catch(NumberFormatException nfe) {
-								num=-1;
-							}
-							sm.addToBoard(r, c, num,txtField);
-							
-						}
-					//	System.out.print("row: "+r+" col: "+c+" num: "+num );
-						
-						
-					}
-					@Override
-					public void removeUpdate(DocumentEvent e) {
-						str=txtField.getText();
-						if(str.equals("")) {
-							num=0;
-						}
-						
-						else {
-							try {
-								num=Integer.parseInt(str);
-								
-							}
-							catch(NumberFormatException nfe) {
-								num=-1;
-							}
-							sm.addToBoard(r, c, num,txtField);
-							
-						}
-						
-					}
-					@Override
-					public void changedUpdate(DocumentEvent e) {
-						str=txtField.getText();
-						if(str.equals("")) {
-							num=0;
-						}
-						
-						else {
-							try {
-								num=Integer.parseInt(str);
-								
-							}
-							catch(NumberFormatException nfe) {
-								num=-1;
-							}
-							sm.addToBoard(r, c, num,txtField);
-							
-						}
-						
-					}
-				});
 				
+				
+				
+				addToTextField(r,c,txtField);
+
 				panel.add(txtField);
 			}
 			mainPanel.add(panel);
 		}
 	}
+	private void addToTextField(int r, int c,JTextField txtField) {
+
+		txtField.getDocument().addDocumentListener(new DocumentListener() {
+			String str;
+			int num=0;
+			
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				str=txtField.getText();
+			
+				
+				if(tglbtnPencil.isSelected()) {
+					drawPencil dp=new drawPencil(str);
+					if(str.equals("")) {
+						System.out.println("Remove");
+					}
+					 Thread thRemoveText=new Thread(new Runnable()
+						{
+						    @Override
+						    public void run()
+						    {
+						    	txtField.setText("");
+
+						    }
+						    	
+						    
+						});	    
+				
+					    SwingUtilities.invokeLater(thRemoveText);
+					dp.setBackground(Color.WHITE);
+					dp.setLocation(0, 0);
+					dp.setSize(100, 100);
+					txtField.add(dp);
+					dp.repaint();
+				}
+				else {
+					
+					if(str.equals("")) {
+						num=0;
+					}
+					
+					else {
+						try {
+							num=Integer.parseInt(str);
+							
+						}
+						catch(NumberFormatException nfe) {
+							num=-1;
+						}
+						sm.addToBoard(r, c, num,txtField);
+						
+					}
+					
+				}
+				
+				
+			}
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				str=txtField.getText();
+				if(tglbtnPencil.isSelected()) {
+
+					drawPencil dp=new drawPencil(str);
+
+					if(str.equals("")) {
+						System.out.println("Remove");
+					}
+					 Thread thRemoveText=new Thread(new Runnable()
+						{
+						    @Override
+						    public void run()
+						    {
+						    	txtField.setText("");
+
+						    }
+						    	
+						    
+						});	    
+				
+					    SwingUtilities.invokeLater(thRemoveText);
+					dp.setBackground(Color.WHITE);
+					dp.setLocation(0, 0);
+					dp.setSize(100, 100);
+					txtField.add(dp);
+					dp.repaint();
+					}
+				else {
+			
+					if(str.equals("")) {
+						num=0;
+					}
+					
+					else {
+						try {
+							num=Integer.parseInt(str);
+							
+						}
+						catch(NumberFormatException nfe) {
+							num=-1;
+						}
+						sm.addToBoard(r, c, num,txtField);
+						
+					}
+					
+				}
+				
+			}
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				str=txtField.getText();
+					if(tglbtnPencil.isSelected()) {
+					
+						drawPencil dp=new drawPencil(str);
+
+						if(str.equals("")) {
+							System.out.println("Remove");
+						}
+						 Thread thRemoveText=new Thread(new Runnable()
+							{
+							    @Override
+							    public void run()
+							    {
+							    	txtField.setText("");
+
+							    }
+							    	
+							    
+							});	    
+					
+						    SwingUtilities.invokeLater(thRemoveText);
+						dp.setBackground(Color.WHITE);
+						dp.setLocation(0, 0);
+						dp.setSize(100, 100);
+						txtField.add(dp);
+						dp.repaint();
+					}
+					else {
+
+					if(str.equals("")) {
+						num=0;
+					}
+					
+					else {
+						try {
+							num=Integer.parseInt(str);
+							
+						}
+						catch(NumberFormatException nfe) {
+							num=-1;
+						}
+						sm.addToBoard(r, c, num,txtField);
+						
+					}
+					
+				}
+			}
+		});
+		
+	}
+	
+
 	
 	
 	public int getRow(int i,int j) {
