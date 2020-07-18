@@ -63,7 +63,7 @@ public class SudukoMethods {
 		return clrSelected;
 	}
 	
-	private boolean checkBasicValid(int num) {//checks if they are at least entering a valid input
+	public boolean checkBasicValid(int num) {//checks if they are at least entering a valid input
 		if(num==-1) {
 			return false;
 		}
@@ -772,6 +772,7 @@ public class SudukoMethods {
 					jtxtField.setText(c.getVal()+"");
 					jtxtField.setEditable(false);
 					jtxtField.setBackground(clrSelected);
+					board[row][col]=c.getVal();
 				}
 
 				

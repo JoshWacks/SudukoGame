@@ -33,8 +33,11 @@ public class drawPencil extends JLabel{
     	Graphics2D g2 = (Graphics2D)g;
         super.paintComponent(g2);  
         g2.setColor(Color.GRAY);
+        
+        
 
         g2.drawString(num, X, Y);
+
        
         
     } 

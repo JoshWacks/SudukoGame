@@ -26,6 +26,7 @@ public class DrawMistakes extends JPanel {
 	        g2.setColor(Color.RED);
 
 	        g2.setStroke(new BasicStroke(3));
+	        
 	        switch(p) {
 	        case 1:
 	        	g2.drawLine(points[0], points[0], points[1],points[1]);

@@ -14,6 +14,9 @@ import javax.swing.JOptionPane;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -52,7 +55,7 @@ public class GameWindow {
 
 	private JToggleButton tglbtnPencil;
 	private boolean pencilOn=false;
-
+	
 	public GameWindow() {
 		
 		sm=new SudukoMethods();
@@ -303,174 +306,267 @@ public class GameWindow {
 				final int r=row;
 				final int c=col;
 				
-				
-				
-				
-				addToTextField(r,c,txtField);
+				txtField.addKeyListener(new KeyAdapter() {
+					
+					int num=0;
+
+					@Override
+					public void keyReleased(KeyEvent e) {
+						String str=txtField.getText();
+						
+						if(tglbtnPencil.isSelected()) {
+							 Thread thRemoveText=new Thread(new Runnable()
+								{
+								    @Override
+								    public void run()
+								    {
+								    	txtField.setText("");
+								    }
+								    	
+								    
+								});	 
+							try {
+								if(!sm.checkBasicValid(Integer.parseInt(str))&&!str.equals(" ")) {
+									JOptionPane.showMessageDialog(GameWindow.frame, "Your pencil inputs must still be a valid number");
+									thRemoveText.start();
+									return;
+								}
+							}catch(NumberFormatException nfe) {
+								JOptionPane.showMessageDialog(GameWindow.frame, "Your pencil inputs must still be a valid number");
+								thRemoveText.start();
+								return;
+							}
+							
+							if(txtField.getComponentCount()>0&&!str.equals("")) {
+								drawPencil dp=(drawPencil) txtField.getComponent(0);
+								dp.setNum(str);
+								txtField.repaint();
+							}else {
+								
+								drawPencil dp1=new drawPencil(str);
+								dp1.setBackground(Color.WHITE);
+								dp1.setLocation(0, 0);
+								dp1.setSize(100, 100);
+								txtField.add(dp1);
+								txtField.repaint();
+							}
+							thRemoveText.start();
+							
+						}
+						else {
+
+						
+							if(str.equals("")) {
+								num=0;
+							}
+							
+							else {
+								
+								try {
+									num=Integer.parseInt(str);
+									
+								}
+								catch(NumberFormatException nfe) {
+									num=-1;
+								}
+								sm.addToBoard(r, c, num,txtField);
+								
+							}
+						}
+					}
+				});
 
 				panel.add(txtField);
 			}
 			mainPanel.add(panel);
 		}
 	}
+	
 	private void addToTextField(int r, int c,JTextField txtField) {
-
-		txtField.getDocument().addDocumentListener(new DocumentListener() {
-			String str;
-			int num=0;
-			
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				str=txtField.getText();
-			
-				
-				if(tglbtnPencil.isSelected()) {
-					drawPencil dp=new drawPencil(str);
-					if(str.equals("")) {
-						System.out.println("Remove");
-					}
-					 Thread thRemoveText=new Thread(new Runnable()
-						{
-						    @Override
-						    public void run()
-						    {
-						    	txtField.setText("");
-
-						    }
-						    	
-						    
-						});	    
-				
-					    SwingUtilities.invokeLater(thRemoveText);
-					dp.setBackground(Color.WHITE);
-					dp.setLocation(0, 0);
-					dp.setSize(100, 100);
-					txtField.add(dp);
-					dp.repaint();
-				}
-				else {
-					
-					if(str.equals("")) {
-						num=0;
-					}
-					
-					else {
-						try {
-							num=Integer.parseInt(str);
-							
-						}
-						catch(NumberFormatException nfe) {
-							num=-1;
-						}
-						sm.addToBoard(r, c, num,txtField);
-						
-					}
-					
-				}
-				
-				
-			}
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				str=txtField.getText();
-				if(tglbtnPencil.isSelected()) {
-
-					drawPencil dp=new drawPencil(str);
-
-					if(str.equals("")) {
-						System.out.println("Remove");
-					}
-					 Thread thRemoveText=new Thread(new Runnable()
-						{
-						    @Override
-						    public void run()
-						    {
-						    	txtField.setText("");
-
-						    }
-						    	
-						    
-						});	    
-				
-					    SwingUtilities.invokeLater(thRemoveText);
-					dp.setBackground(Color.WHITE);
-					dp.setLocation(0, 0);
-					dp.setSize(100, 100);
-					txtField.add(dp);
-					dp.repaint();
-					}
-				else {
-			
-					if(str.equals("")) {
-						num=0;
-					}
-					
-					else {
-						try {
-							num=Integer.parseInt(str);
-							
-						}
-						catch(NumberFormatException nfe) {
-							num=-1;
-						}
-						sm.addToBoard(r, c, num,txtField);
-						
-					}
-					
-				}
-				
-			}
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				str=txtField.getText();
-					if(tglbtnPencil.isSelected()) {
-					
-						drawPencil dp=new drawPencil(str);
-
-						if(str.equals("")) {
-							System.out.println("Remove");
-						}
-						 Thread thRemoveText=new Thread(new Runnable()
-							{
-							    @Override
-							    public void run()
-							    {
-							    	txtField.setText("");
-
-							    }
-							    	
-							    
-							});	    
-					
-						    SwingUtilities.invokeLater(thRemoveText);
-						dp.setBackground(Color.WHITE);
-						dp.setLocation(0, 0);
-						dp.setSize(100, 100);
-						txtField.add(dp);
-						dp.repaint();
-					}
-					else {
-
-					if(str.equals("")) {
-						num=0;
-					}
-					
-					else {
-						try {
-							num=Integer.parseInt(str);
-							
-						}
-						catch(NumberFormatException nfe) {
-							num=-1;
-						}
-						sm.addToBoard(r, c, num,txtField);
-						
-					}
-					
-				}
-			}
-		});
 		
+		
+			
+		
+
+//		txtField.getDocument().addDocumentListener(new DocumentListener() {
+//			String str;
+//			int num=0;
+//			
+//			@Override
+//			public void insertUpdate(DocumentEvent e) {
+//				System.out.println("Run1");
+//				str=txtField.getText();
+//				 
+//				
+//				if(tglbtnPencil.isSelected()) {
+//					
+//						
+//					if(txtField.getComponentCount()>0) {
+//						drawPencil dp=(drawPencil) txtField.getComponent(0);
+//						dp.setNum("7");
+//						dp.repaint();
+//					}
+//					
+//					else {
+//						drawPencil dp1=new drawPencil("7");
+//						dp1.setBackground(Color.WHITE);
+//						dp1.setLocation(0, 0);
+//						dp1.setSize(100, 100);
+//						txtField.add(dp1);
+//					}
+//					   Thread thRemoveText=new Thread(new Runnable()
+//					{
+//					    @Override
+//					    public void run()
+//					    {
+//					    	txtField.setText("ABBA");
+//					    	
+//					    }
+//					    	
+//					    
+//					});	    
+//			
+//				   thRemoveText.start();
+//					
+////					  
+//
+//				}
+//				else {
+//					
+//					if(str.equals("")) {
+//						num=0;
+//					}
+//					
+//					else {
+//						try {
+//							num=Integer.parseInt(str);
+//							
+//						}
+//						catch(NumberFormatException nfe) {
+//							num=-1;
+//						}
+//						sm.addToBoard(r, c, num,txtField);
+//						
+//					}
+//					
+//				}
+//				
+//				
+//			}
+//			@Override
+//			public void removeUpdate(DocumentEvent e) {
+//				System.out.println("Run2");
+//				str=txtField.getText();
+//				if(tglbtnPencil.isSelected()) {
+//
+//					if(txtField.getComponentCount()>0) {
+//						drawPencil dp=(drawPencil) txtField.getComponent(0);
+//						dp.setNum("7");
+//						dp.repaint();
+//					}
+//					
+//					else {
+//						drawPencil dp1=new drawPencil("7");
+//						dp1.setBackground(Color.WHITE);
+//						dp1.setLocation(0, 0);
+//						dp1.setSize(100, 100);
+//						txtField.add(dp1);
+//					}
+//					 Thread thRemoveText=new Thread(new Runnable()
+//						{
+//						    @Override
+//						    public void run()
+//						    {
+//						    	txtField.setText("ABBA");
+//						    	
+//						    }
+//						    	
+//						    
+//						});	    
+//				
+//					 thRemoveText.start();
+//						
+//					}
+//				else 
+//				{
+//			
+//					if(str.equals("")) {
+//						num=0;
+//					}
+//					
+//					else {
+//						try {
+//							num=Integer.parseInt(str);
+//							
+//						}
+//						catch(NumberFormatException nfe) {
+//							num=-1;
+//						}
+//						sm.addToBoard(r, c, num,txtField);
+//						
+//					}
+//					
+//				}
+//				
+//			}
+//			@Override
+//			public void changedUpdate(DocumentEvent e) {
+//				System.out.println("Run3");
+//				str=txtField.getText();
+//					if(tglbtnPencil.isSelected()) {
+//						txtField.setText("");
+//						if(txtField.getComponentCount()>0) {
+//							drawPencil dp=(drawPencil) txtField.getComponent(0);
+//							dp.setNum("7");
+//							dp.repaint();
+//						}
+//						
+//						else {
+//							drawPencil dp1=new drawPencil("7");
+//							dp1.setBackground(Color.WHITE);
+//							dp1.setLocation(0, 0);
+//							dp1.setSize(100, 100);
+//							txtField.add(dp1);
+//						}
+//						 Thread thRemoveText=new Thread(new Runnable()
+//							{
+//							    @Override
+//							    public void run()
+//							    {
+//							    	txtField.setText("ABBA");
+//							    	
+//							    }
+//							    	
+//							    
+//							});	    
+//					
+//						 thRemoveText.start();
+//							
+//					}
+//					
+//					
+//					else {
+//
+//					if(str.equals("")) {
+//						num=0;
+//					}
+//					
+//					else {
+//						try {
+//							num=Integer.parseInt(str);
+//							
+//						}
+//						catch(NumberFormatException nfe) {
+//							num=-1;
+//						}
+//						sm.addToBoard(r, c, num,txtField);
+//						
+//					}
+//					
+//				}
+//			}
+//		});
+//		
 	}
 	
 
