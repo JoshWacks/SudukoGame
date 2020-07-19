@@ -292,7 +292,7 @@ public class VirtSudukoMethods {
 	
 	private static void makeRandomGame() {
 		
-		solvedBoard[0][0]=new Cell(0,0,ThreadLocalRandom.current().nextInt(2,9),false);
+		solvedBoard[0][0]=new Cell(0,0,ThreadLocalRandom.current().nextInt(2,9),false);//makes sure the first cell is a random number or it is likely it is 1
 		
 		int randomRow;
 		int randomCol;
@@ -327,6 +327,7 @@ public class VirtSudukoMethods {
 		makeRandomGame();
 		
 		while(!checkSolveable()) {
+			initializeGame();
 			makeRandomGame();
 		}
 		//displaySolvedBoard();

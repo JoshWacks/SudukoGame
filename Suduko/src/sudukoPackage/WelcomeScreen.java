@@ -185,7 +185,7 @@ public class WelcomeScreen {
 		lblTips.setToolTipText("Check here if you want to be told you have placed a number in the wrong place");
 		lblTips.setForeground(new Color(0, 102, 153));
 		lblTips.setFont(new Font("Sitka Display", Font.BOLD, 23));
-		lblTips.setBounds(10, 212, 110, 21);
+		lblTips.setBounds(10, 212, 110, 30);
 		frmSudoko.getContentPane().add(lblTips);
 		
 		chckTips = new JCheckBox("");

@@ -231,7 +231,12 @@ public class SudukoMethods {
 							Thread.sleep(use);
 							txtField.setBackground(finalCLr);
 							Thread.sleep(use);
-							txtField.setBackground(Color.WHITE);
+							if(txtField.isEditable()) {
+								txtField.setBackground(Color.WHITE);
+							}
+							else {
+								txtField.setBackground(clrSelected);
+							}
 							
 						
 						
@@ -377,6 +382,9 @@ public class SudukoMethods {
 		if(numeric) {
 			if(valid&&helpOn) {//valid entry 
 				board[row][col]=val;
+				if(!solveOn) {
+					checkSetNineCompleted(row,col);
+				}
 
 				if(checkBoardSolved()) {
 					endGame();
@@ -738,8 +746,8 @@ public class SudukoMethods {
 				numCols=3;
 				break;
 			case "easy":
-				numRows=8;
-				numCols=5;
+				numRows=9;
+				numCols=8;
 				break;
 		}
 		
